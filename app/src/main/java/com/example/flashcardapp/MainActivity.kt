@@ -15,19 +15,14 @@ class MainActivity : AppCompatActivity() {
         val flashcardAnswer = findViewById<TextView>(R.id.flashcard_answer)
         flashcardQuestion.setOnClickListener()
         {
-            if (flashcardQuestion.isVisible)
-            {
                 flashcardQuestion.visibility = View.INVISIBLE
                 flashcardAnswer.visibility = View.VISIBLE
-            }
         }
+
         flashcardAnswer.setOnClickListener()
         {
-            if (flashcardAnswer.isVisible)
-            {
                 flashcardQuestion.visibility = View.VISIBLE
                 flashcardAnswer.visibility = View.INVISIBLE
-            }
         }
     }
 }
