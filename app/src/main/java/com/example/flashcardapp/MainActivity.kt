@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.isVisible
 import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
@@ -14,8 +15,19 @@ class MainActivity : AppCompatActivity() {
         val flashcardAnswer = findViewById<TextView>(R.id.flashcard_answer)
         flashcardQuestion.setOnClickListener()
         {
-            flashcardQuestion.visibility = View.INVISIBLE
-            flashcardAnswer.visibility = View.VISIBLE
+            if (flashcardQuestion.isVisible)
+            {
+                flashcardQuestion.visibility = View.INVISIBLE
+                flashcardAnswer.visibility = View.VISIBLE
+            }
+        }
+        flashcardAnswer.setOnClickListener()
+        {
+            if (flashcardAnswer.isVisible)
+            {
+                flashcardQuestion.visibility = View.VISIBLE
+                flashcardAnswer.visibility = View.INVISIBLE
+            }
         }
     }
 }

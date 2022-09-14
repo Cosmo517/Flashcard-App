@@ -12,6 +12,7 @@
         android:layout_height="200dp"
         android:textSize="40sp"
         android:gravity="center"
+        android:background="@color/teal_200"
         android:text="What programming language came out in 1978?" />
 
     <TextView
@@ -21,5 +22,6 @@
         android:gravity="center"
         android:text="The programming language C"
         android:textSize="40sp"
+        android:background="@color/purple_200"
         android:visibility="invisible" />
 </RelativeLayout>
