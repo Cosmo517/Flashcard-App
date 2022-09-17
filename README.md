@@ -3,7 +3,7 @@
 ## Lab 1
 
 ### App Description
-This simple app asks a single question, and allows the user to tap the screen and display the answer.
+This simple app asks a single question, and allows the user to tap the question to reveal the answer, tap one of the multiple choices which will highlight the answer, reset the answers, or hide the visibility of the visible answers.
 
 ### App Walk-though
 <img src="https://i.imgur.com/okoPCxz.gif" width=200><br>
