@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/ethan/AndroidStudioProjects/FlashcardApp/app/src/main/res/drawable/card_background.xml" value="0.1915" />
+        <entry key="..\:/Users/ethan/AndroidStudioProjects/FlashcardApp/app/src/main/res/drawable/card_background_answer.xml" value="0.1915" />
+        <entry key="..\:/Users/ethan/AndroidStudioProjects/FlashcardApp/app/src/main/res/drawable/card_background_question.xml" value="0.1915" />
+        <entry key="..\:/Users/ethan/AndroidStudioProjects/FlashcardApp/app/src/main/res/drawable/ic_iconmonstr_eye_lined.xml" value="0.1655" />
+        <entry key="..\:/Users/ethan/AndroidStudioProjects/FlashcardApp/app/src/main/res/drawable/ic_iconmonstr_eye_off_lined.xml" value="0.1655" />
         <entry key="..\:/Users/ethan/AndroidStudioProjects/FlashcardApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
       </map>
     </option>

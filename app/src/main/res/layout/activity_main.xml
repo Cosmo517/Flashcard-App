@@ -10,18 +10,89 @@
         android:id="@+id/flashcard_question"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:textSize="40sp"
+        android:textSize="35sp"
         android:gravity="center"
-        android:background="@color/teal_200"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/card_background_question"
         android:text="What programming language came out in 1978?" />
 
     <TextView
         android:id="@+id/flashcard_answer"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:background="@drawable/card_background_answer"
+        android:gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:text="The programming language C"
+        android:textSize="35sp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/wrong_answer_1"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/flashcard_question"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="134dp"
+        android:gravity="center"
+        android:background="#FFEB3B"
+        android:textColor="@color/black"
+        android:text="The programming language C++" />
+
+    <TextView
+        android:id="@+id/correct_answer"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/wrong_answer_1"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="50dp"
+        android:background="#FFEB3B"
         android:gravity="center"
         android:text="The programming language C"
-        android:textSize="40sp"
-        android:background="@color/purple_200"
-        android:visibility="invisible" />
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/wrong_answer_2"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/correct_answer"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="50dp"
+        android:background="#FFEB3B"
+        android:gravity="center"
+        android:text="The programming language Java"
+        android:textColor="@color/black" />
+
+    <ImageView
+        android:id="@+id/toggle_choices"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/wrong_answer_2"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="86dp"
+        app:srcCompat="@drawable/hide_answers" />
+
+    <TextView
+        android:id="@+id/reset_answers"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/wrong_answer_2"
+        android:layout_alignEnd="@+id/wrong_answer_2"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="86dp"
+        android:gravity="center"
+        android:layout_marginEnd="50dp"
+        android:background="#FFEB3B"
+        android:textColor="@color/black"
+        android:layout_toEndOf="@+id/toggle_choices"
+        android:text="Reset Answers" />
+
 </RelativeLayout>
