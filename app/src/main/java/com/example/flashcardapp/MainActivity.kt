@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         val hideAnswers = findViewById<ImageView>(R.id.toggle_choices)
         val addCard = findViewById<ImageView>(R.id.add_card_button)
         var isShowingAnswers = true
+        var hasMultipleChoice = true
 
         // Detects if the user clicks the Question to reveal the answer
         flashcardQuestion.setOnClickListener()
@@ -66,15 +67,21 @@ class MainActivity : AppCompatActivity() {
             correctAnswer.setBackgroundColor(Color.parseColor("#FFEB3B"))
             hideAnswers.setImageResource(R.drawable.hide_answers)
             isShowingAnswers = true
+            wrongAnswer1.text = "The programming language C++"
+            wrongAnswer2.text = "The programming language java"
+            correctAnswer.text = "the programming language C"
+            flashcardQuestion.text = "What programming language came out in 1978?"
+            flashcardAnswer.text = "The programming language C"
             wrongAnswer1.visibility = View.VISIBLE
             wrongAnswer2.visibility = View.VISIBLE
             correctAnswer.visibility = View.VISIBLE
+            hasMultipleChoice = true
         }
 
         // Detects if hideAnswers was clicked and shows/hides the answers as appropriate
         hideAnswers.setOnClickListener()
         {
-            if (isShowingAnswers)
+            if (isShowingAnswers && hasMultipleChoice)
             {
                 hideAnswers.setImageResource(R.drawable.show_answers)
                 wrongAnswer1.visibility = View.INVISIBLE
@@ -82,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 correctAnswer.visibility = View.INVISIBLE
                 isShowingAnswers = false
             }
-            else
+            else if (hasMultipleChoice)
             {
                 hideAnswers.setImageResource(R.drawable.hide_answers)
                 wrongAnswer1.visibility = View.VISIBLE
@@ -92,6 +99,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // this is used for when the user wants to make their own question
         val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             // This code is executed in StartingActivity after we come back from EndingActivity
@@ -105,15 +113,16 @@ class MainActivity : AppCompatActivity() {
 
                 //Log.i("MainActivity", "string1: $question")
                 //Log.i("MainActivity", "string2: $answer")
-                flashcardQuestion.setText(question)
-                flashcardAnswer.setText(answer)
+                flashcardQuestion.text = question
+                flashcardAnswer.text = answer
+                hasMultipleChoice = false;
+                wrongAnswer1.visibility = View.INVISIBLE
+                wrongAnswer2.visibility = View.INVISIBLE
+                correctAnswer.visibility = View.INVISIBLE
             }
-            else
-            {
+            else {
                 Log.i("MainActivity", "Returned null data from AddCardActivity")
             }
-
-
         }
 
 
