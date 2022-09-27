@@ -4,9 +4,11 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,10 +92,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            // This code is executed in StartingActivity after we come back from EndingActivity
+            // This extracts any data that was passed back from EndingActivity
+            val data: Intent? = result.data
+
+            if (data != null)
+            {
+                val question = data.getStringExtra("question")
+                val answer = data.getStringExtra("answer")
+
+                //Log.i("MainActivity", "string1: $question")
+                //Log.i("MainActivity", "string2: $answer")
+                flashcardQuestion.setText(question)
+                flashcardAnswer.setText(answer)
+            }
+            else
+            {
+                Log.i("MainActivity", "Returned null data from AddCardActivity")
+            }
+
+
+        }
+
+
         addCard.setOnClickListener()
         {
             val intent = Intent(this, AddCardActivity::class.java)
-            startActivity(intent)
+            resultLauncher.launch(intent)
         }
 
     }

@@ -47,7 +47,7 @@
         android:minHeight="48dp" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/save_creation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
