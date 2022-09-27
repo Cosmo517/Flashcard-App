@@ -6,8 +6,7 @@
 This simple app asks a single question, and allows the user to tap the question to reveal the answer, tap one of the multiple choices which will highlight the answer, reset the answers, or hide the visibility of the visible answers. New functionality was added to allow the user to replace the question that is asked (and the corresponding answer) with a question and answer of their choosing.
 
 ### App Walk-though
-Coming soon
-<img src="YOUR_GIF_URL_HERE" width=200><br>
+<img src="https://i.imgur.com/s2P0eCp.gif" width=200><br>
 
 ## Required
 - [x] User can click on a ‘+’ button that takes the user to new ‘Add Card Screen’
