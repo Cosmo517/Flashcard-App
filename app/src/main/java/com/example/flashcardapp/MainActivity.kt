@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         val resetAnswers = findViewById<ImageView>(R.id.reset_answers)
         val hideAnswers = findViewById<ImageView>(R.id.toggle_choices)
         val addCard = findViewById<ImageView>(R.id.add_card_button)
+        val editCard = findViewById<ImageView>(R.id.edit_button)
         var isShowingAnswers = true
         var hasMultipleChoice = true
 
@@ -67,9 +69,11 @@ class MainActivity : AppCompatActivity() {
             correctAnswer.setBackgroundColor(Color.parseColor("#FFEB3B"))
             hideAnswers.setImageResource(R.drawable.hide_answers)
             isShowingAnswers = true
+            flashcardQuestion.visibility = View.VISIBLE
+            flashcardAnswer.visibility = View.INVISIBLE
             wrongAnswer1.text = "The programming language C++"
-            wrongAnswer2.text = "The programming language java"
-            correctAnswer.text = "the programming language C"
+            wrongAnswer2.text = "The programming language Java"
+            correctAnswer.text = "The programming language C"
             flashcardQuestion.text = "What programming language came out in 1978?"
             flashcardAnswer.text = "The programming language C"
             wrongAnswer1.visibility = View.VISIBLE
@@ -108,17 +112,49 @@ class MainActivity : AppCompatActivity() {
 
             if (data != null)
             {
-                val question = data.getStringExtra("question")
-                val answer = data.getStringExtra("answer")
+                val userQuestion = data.getStringExtra("QUESTION_KEY")
+                val userAnswer = data.getStringExtra("ANSWER_KEY")
+                val userWrongAnswer1 = data.getStringExtra("WRONG_ANSWER_1_KEY")
+                val userWrongAnswer2 = data.getStringExtra("WRONG_ANSWER_2_KEY")
 
-                //Log.i("MainActivity", "string1: $question")
-                //Log.i("MainActivity", "string2: $answer")
-                flashcardQuestion.text = question
-                flashcardAnswer.text = answer
-                hasMultipleChoice = false;
-                wrongAnswer1.visibility = View.INVISIBLE
-                wrongAnswer2.visibility = View.INVISIBLE
-                correctAnswer.visibility = View.INVISIBLE
+                // Makes a snackbar letting the user know the flashcard was created
+                Snackbar.make(findViewById(R.id.flashcard_question),
+                    "Flashcard successfully created",
+                    Snackbar.LENGTH_SHORT)
+                    .show()
+
+                Log.i("MainActivityUser", "userQuestion: $userQuestion")
+                Log.i("MainActivityUser", "userAnswer: $userAnswer")
+                Log.i("MainActivityUser", "userWrongAnswer1: $userWrongAnswer1")
+                Log.i("MainActivityUser", "userWrongAnswer2: $userWrongAnswer2")
+
+                // set the questions/answers to the users questions
+                flashcardQuestion.text = userQuestion
+                flashcardAnswer.text = userAnswer
+                correctAnswer.text = userAnswer
+
+
+                // check to see if the user used multiple choice questions, and if they did, set the text
+                if (userWrongAnswer1.toString() != "null" && userWrongAnswer2.toString() != "null")
+                {
+                    hasMultipleChoice = true
+                    wrongAnswer1.text = userWrongAnswer1
+                    wrongAnswer2.text = userWrongAnswer2
+                    wrongAnswer1.visibility = View.VISIBLE
+                    wrongAnswer2.visibility = View.VISIBLE
+                    correctAnswer.visibility = View.VISIBLE
+                }
+
+                // if the user did not use MCQ, hide the MC answers
+                if (userWrongAnswer1.toString() == "null" && userWrongAnswer2.toString() == "null")
+                {
+                    hasMultipleChoice = false;
+                    wrongAnswer1.text = ""
+                    wrongAnswer2.text = ""
+                    wrongAnswer1.visibility = View.INVISIBLE
+                    wrongAnswer2.visibility = View.INVISIBLE
+                    correctAnswer.visibility = View.INVISIBLE
+                }
             }
             else {
                 Log.i("MainActivity", "Returned null data from AddCardActivity")
@@ -129,6 +165,19 @@ class MainActivity : AppCompatActivity() {
         addCard.setOnClickListener()
         {
             val intent = Intent(this, AddCardActivity::class.java)
+            resultLauncher.launch(intent)
+        }
+
+        editCard.setOnClickListener()
+        {
+            val intent = Intent(this, AddCardActivity::class.java)
+            intent.putExtra("question", flashcardQuestion.text)
+            intent.putExtra("answer", flashcardAnswer.text)
+            if (wrongAnswer1.text.toString() != "null" && wrongAnswer2.text.toString() != "null")
+            {
+                intent.putExtra("wrongAnswer1", wrongAnswer1.text)
+                intent.putExtra("wrongAnswer2", wrongAnswer2.text)
+            }
             resultLauncher.launch(intent)
         }
 
