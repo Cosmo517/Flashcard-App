@@ -42,9 +42,9 @@
         android:layout_marginTop="135dp"
         android:background="#FFEB3B"
         android:gravity="center"
-        android:textSize="22dp"
         android:text="The programming language C++"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="22dp" />
 
     <TextView
         android:id="@+id/correct_answer"
@@ -115,5 +115,25 @@
         android:layout_marginTop="86dp"
         android:layout_toEndOf="@+id/toggle_choices"
         app:srcCompat="@drawable/edit_icon_image" />
+
+    <ImageView
+        android:id="@+id/next_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/flashcard_question"
+        android:layout_alignEnd="@+id/wrong_answer_1"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="30dp"
+        app:srcCompat="@drawable/next_card_symbol" />
+
+    <ImageView
+        android:id="@+id/delete_card_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/flashcard_question"
+        android:layout_alignStart="@+id/flashcard_question"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        app:srcCompat="@drawable/ic_iconmonstr_trash_can_30" />
 
 </RelativeLayout>

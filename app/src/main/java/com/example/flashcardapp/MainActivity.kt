@@ -12,7 +12,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
+    lateinit var flashcardDatabase: FlashcardDatabase
+    var allFlashcards = mutableListOf<Flashcard>()
     override fun onCreate(savedInstanceState: Bundle?) {
+        flashcardDatabase = FlashcardDatabase(this)
+        allFlashcards = flashcardDatabase.getAllCards().toMutableList()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val flashcardQuestion = findViewById<TextView>(R.id.flashcard_question)
@@ -24,8 +28,24 @@ class MainActivity : AppCompatActivity() {
         val hideAnswers = findViewById<ImageView>(R.id.toggle_choices)
         val addCard = findViewById<ImageView>(R.id.add_card_button)
         val editCard = findViewById<ImageView>(R.id.edit_button)
+        val nextCard = findViewById<ImageView>(R.id.next_button)
+        val deleteCard = findViewById<ImageView>(R.id.delete_card_button)
+
+        var currentCardIndex = 0;
         var isShowingAnswers = true
         var hasMultipleChoice = true
+
+        if (allFlashcards.size > 0)
+        {
+            flashcardQuestion.text = allFlashcards[0].question
+            flashcardAnswer.text = allFlashcards[0].answer
+            if (allFlashcards[0].wrongAnswer1 != "NULL" && allFlashcards[0].wrongAnswer2 != "NULL")
+            {
+                wrongAnswer1.text = allFlashcards[0].wrongAnswer1
+                correctAnswer.text = allFlashcards[0].answer
+                wrongAnswer2.text = allFlashcards[0].wrongAnswer2
+            }
+        }
 
         // Detects if the user clicks the Question to reveal the answer
         flashcardQuestion.setOnClickListener()
@@ -103,6 +123,103 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        nextCard.setOnClickListener()
+        {
+            // TODO: Randomize the order in which the cards are shown
+
+            if (allFlashcards.size == 0)
+            {
+                return@setOnClickListener
+            }
+            else if (allFlashcards.size > currentCardIndex + 1)
+            {
+                currentCardIndex++;
+            }
+            else
+            {
+                Snackbar.make(flashcardQuestion, "You've reached the end of you're flashcards. Going back to the start.", Snackbar.LENGTH_SHORT).show()
+                currentCardIndex = 0;
+            }
+
+            flashcardQuestion.text = allFlashcards[currentCardIndex].question
+            flashcardAnswer.text = allFlashcards[currentCardIndex].answer
+            if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
+            {
+                wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+                correctAnswer.text = allFlashcards[currentCardIndex].answer
+                wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                wrongAnswer1.visibility = View.VISIBLE
+                correctAnswer.visibility = View.VISIBLE
+                wrongAnswer2.visibility = View.VISIBLE
+            }
+            else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
+            {
+                wrongAnswer1.visibility = View.INVISIBLE
+                correctAnswer.visibility = View.INVISIBLE
+                wrongAnswer2.visibility = View.INVISIBLE
+            }
+        }
+
+        deleteCard.setOnClickListener()
+        {
+            flashcardDatabase.deleteCard(flashcardQuestion.text.toString())
+            allFlashcards = flashcardDatabase.getAllCards().toMutableList()
+            if (currentCardIndex > 0)
+            {
+                currentCardIndex--;
+                flashcardQuestion.text = allFlashcards[currentCardIndex].question
+                flashcardAnswer.text = allFlashcards[currentCardIndex].answer
+                if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
+                {
+                    wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+                    correctAnswer.text = allFlashcards[currentCardIndex].answer
+                    wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                    wrongAnswer1.visibility = View.VISIBLE
+                    correctAnswer.visibility = View.VISIBLE
+                    wrongAnswer2.visibility = View.VISIBLE
+                }
+                else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
+                {
+                    wrongAnswer1.visibility = View.INVISIBLE
+                    correctAnswer.visibility = View.INVISIBLE
+                    wrongAnswer2.visibility = View.INVISIBLE
+                }
+            }
+            else if (currentCardIndex == 0 && allFlashcards.size == 0)
+            {
+                flashcardDatabase.deleteCard(flashcardQuestion.text.toString())
+                allFlashcards = flashcardDatabase.getAllCards().toMutableList()
+                flashcardQuestion.text = "Please create a card"
+                flashcardAnswer.text = "Please create a card"
+                wrongAnswer1.visibility = View.INVISIBLE
+                correctAnswer.visibility = View.INVISIBLE
+                wrongAnswer2.visibility = View.INVISIBLE
+            }
+            else if (currentCardIndex == 0 && allFlashcards.size > 0)
+            {
+                currentCardIndex = allFlashcards.size - 1
+                flashcardQuestion.text = allFlashcards[currentCardIndex].question
+                flashcardAnswer.text = allFlashcards[currentCardIndex].answer
+                if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
+                {
+                    wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+                    correctAnswer.text = allFlashcards[currentCardIndex].answer
+                    wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                    wrongAnswer1.visibility = View.VISIBLE
+                    correctAnswer.visibility = View.VISIBLE
+                    wrongAnswer2.visibility = View.VISIBLE
+                }
+                else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
+                {
+                    wrongAnswer1.visibility = View.INVISIBLE
+                    correctAnswer.visibility = View.INVISIBLE
+                    wrongAnswer2.visibility = View.INVISIBLE
+                }
+
+            }
+        }
+
+
         // this is used for when the user wants to make their own question
         val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
@@ -112,10 +229,10 @@ class MainActivity : AppCompatActivity() {
 
             if (data != null)
             {
-                val userQuestion = data.getStringExtra("QUESTION_KEY")
-                val userAnswer = data.getStringExtra("ANSWER_KEY")
-                val userWrongAnswer1 = data.getStringExtra("WRONG_ANSWER_1_KEY")
-                val userWrongAnswer2 = data.getStringExtra("WRONG_ANSWER_2_KEY")
+                val userQuestion = data.getStringExtra("QUESTION_KEY").toString()
+                val userAnswer = data.getStringExtra("ANSWER_KEY").toString()
+                val userWrongAnswer1 = data.getStringExtra("WRONG_ANSWER_1_KEY").toString()
+                val userWrongAnswer2 = data.getStringExtra("WRONG_ANSWER_2_KEY").toString()
 
                 // Makes a snackbar letting the user know the flashcard was created
                 Snackbar.make(findViewById(R.id.flashcard_question),
@@ -128,33 +245,17 @@ class MainActivity : AppCompatActivity() {
                 Log.i("MainActivityUser", "userWrongAnswer1: $userWrongAnswer1")
                 Log.i("MainActivityUser", "userWrongAnswer2: $userWrongAnswer2")
 
-                // set the questions/answers to the users questions
-                flashcardQuestion.text = userQuestion
-                flashcardAnswer.text = userAnswer
-                correctAnswer.text = userAnswer
-
-
-                // check to see if the user used multiple choice questions, and if they did, set the text
-                if (userWrongAnswer1.toString() != "null" && userWrongAnswer2.toString() != "null")
+                if (userWrongAnswer1 != "null" && userWrongAnswer2 != "null")
                 {
-                    hasMultipleChoice = true
-                    wrongAnswer1.text = userWrongAnswer1
-                    wrongAnswer2.text = userWrongAnswer2
-                    wrongAnswer1.visibility = View.VISIBLE
-                    wrongAnswer2.visibility = View.VISIBLE
-                    correctAnswer.visibility = View.VISIBLE
+                    flashcardDatabase.insertCard(Flashcard(userQuestion, userAnswer, userWrongAnswer1, userWrongAnswer2))
                 }
-
-                // if the user did not use MCQ, hide the MC answers
-                if (userWrongAnswer1.toString() == "null" && userWrongAnswer2.toString() == "null")
+                else if (userWrongAnswer1 == "null" && userWrongAnswer2 == "null")
                 {
-                    hasMultipleChoice = false;
-                    wrongAnswer1.text = ""
-                    wrongAnswer2.text = ""
-                    wrongAnswer1.visibility = View.INVISIBLE
-                    wrongAnswer2.visibility = View.INVISIBLE
-                    correctAnswer.visibility = View.INVISIBLE
+                    flashcardDatabase.insertCard(Flashcard(userQuestion, userAnswer))
                 }
+                allFlashcards = flashcardDatabase.getAllCards().toMutableList()
+
+
             }
             else {
                 Log.i("MainActivity", "Returned null data from AddCardActivity")
@@ -167,6 +268,9 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddCardActivity::class.java)
             resultLauncher.launch(intent)
         }
+
+        // TODO: User should be able to edit a card and see the edit saved when they browse through their deck of cards
+
 
         editCard.setOnClickListener()
         {
