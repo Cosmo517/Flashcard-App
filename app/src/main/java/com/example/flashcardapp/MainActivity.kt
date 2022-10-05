@@ -39,11 +39,20 @@ class MainActivity : AppCompatActivity() {
         {
             flashcardQuestion.text = allFlashcards[0].question
             flashcardAnswer.text = allFlashcards[0].answer
-            if (allFlashcards[0].wrongAnswer1 != "NULL" && allFlashcards[0].wrongAnswer2 != "NULL")
+            if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
             {
-                wrongAnswer1.text = allFlashcards[0].wrongAnswer1
-                correctAnswer.text = allFlashcards[0].answer
-                wrongAnswer2.text = allFlashcards[0].wrongAnswer2
+                wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+                correctAnswer.text = allFlashcards[currentCardIndex].answer
+                wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                wrongAnswer1.visibility = View.VISIBLE
+                correctAnswer.visibility = View.VISIBLE
+                wrongAnswer2.visibility = View.VISIBLE
+            }
+            else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
+            {
+                wrongAnswer1.visibility = View.INVISIBLE
+                correctAnswer.visibility = View.INVISIBLE
+                wrongAnswer2.visibility = View.INVISIBLE
             }
         }
 
