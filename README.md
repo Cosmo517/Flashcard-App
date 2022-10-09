@@ -6,7 +6,7 @@
 The app has been updated to allow the user to create multiple flashcards of their choice. The user can either add multiple choice answers or not when they create or edit an existing card. The user can also delete a card in the deck if they dont wish to see it anymore. A flashcard is randomly chosen from the deck when the user clicks the "next" button. This avoids picking the same card the user is currently on to always generate a random card, assuming there is more than one card in the deck.
 
 ### App Walk-though
-<img src="YOUR_GIF_URL_HERE" width=200><br>
+<img src="https://i.imgur.com/7kZj1MT.gif" width=200><br>
 
 
 ## Required
