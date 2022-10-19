@@ -6,10 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewAnimationUtils
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
+import java.security.AccessController.getContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -61,63 +65,108 @@ class MainActivity : AppCompatActivity() {
         // Detects if the user clicks the Question to reveal the answer
         flashcardQuestion.setOnClickListener()
         {
-                flashcardQuestion.visibility = View.INVISIBLE
-                flashcardAnswer.visibility = View.VISIBLE
+            val answerSideView = findViewById<View>(R.id.flashcard_answer)
+
+            // get the center for the clipping circle
+            val cx = answerSideView.width / 2
+            val cy = answerSideView.height / 2
+
+            // get the final radius for the clipping circle
+
+            val finalRadius = Math.hypot(cx.toDouble(), cy.toDouble()).toFloat()
+
+            // create the animator for this view (the start radius is zero)
+
+            val anim = ViewAnimationUtils.createCircularReveal(answerSideView, cx, cy, 0f, finalRadius)
+
+
+        // hide the question and show the answer to prepare for playing the animation!
+            flashcardQuestion.visibility = View.INVISIBLE
+            answerSideView.visibility = View.VISIBLE
+
+            anim.duration = 2500
+            anim.start()
         }
 
         // Detects if the user clicks the Answer to toggle back to the question
         flashcardAnswer.setOnClickListener()
         {
-                flashcardQuestion.visibility = View.VISIBLE
-                flashcardAnswer.visibility = View.INVISIBLE
-        }
+            val questionSideView = findViewById<View>(R.id.flashcard_question)
 
+            // get the center for the clipping circle
+            val cx = questionSideView.width / 2
+            val cy = questionSideView.height / 2
+
+            // get the final radius for the clipping circle
+
+            val finalRadius = Math.hypot(cx.toDouble(), cy.toDouble()).toFloat()
+
+            // create the animator for this view (the start radius is zero)
+
+            val anim = ViewAnimationUtils.createCircularReveal(questionSideView, cx, cy, 0f, finalRadius)
+
+
+            // hide the question and show the answer to prepare for playing the animation!
+            flashcardAnswer.visibility = View.INVISIBLE
+            questionSideView.visibility = View.VISIBLE
+
+            anim.duration = 2500
+            anim.start()
+        }
+        var correctAnswerColor = "#6fdbff"
+        var incorrectAnswerColor = "#ddf6ff"
         // Detects if wrongAnswer 1 was clicked and changes the corresponding background colors
         wrongAnswer1.setOnClickListener()
         {
-            wrongAnswer1.setBackgroundColor(Color.parseColor("#FF0000"))
-            correctAnswer.setBackgroundColor(Color.parseColor("#00FF00"))
+            wrongAnswer1.setBackgroundColor(Color.parseColor(incorrectAnswerColor))
+            correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
         }
 
         // Detects if wrongAnswer 2 was clicked and changes the corresponding background colors
         wrongAnswer2.setOnClickListener()
         {
-            wrongAnswer2.setBackgroundColor(Color.parseColor("#FF0000"))
-            correctAnswer.setBackgroundColor(Color.parseColor("#00FF00"))
+            wrongAnswer2.setBackgroundColor(Color.parseColor(incorrectAnswerColor))
+            correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
         }
 
         // Detects if correctAnswer was clicked and changes the corresponding background colors
         correctAnswer.setOnClickListener()
         {
-            correctAnswer.setBackgroundColor(Color.parseColor("#00FF00"))
+            correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
         }
 
         // Detects if resetAnswers was clicked and resets all colors/views
         resetAnswers.setOnClickListener()
         {
-            wrongAnswer1.setBackgroundColor(Color.parseColor("#FFEB3B"))
-            wrongAnswer2.setBackgroundColor(Color.parseColor("#FFEB3B"))
-            correctAnswer.setBackgroundColor(Color.parseColor("#FFEB3B"))
-            flashcardQuestion.text = allFlashcards[currentCardIndex].question
-            flashcardAnswer.text = allFlashcards[currentCardIndex].answer
-            if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
+            wrongAnswer1.setBackgroundColor(Color.parseColor("#bbeeff"))
+            wrongAnswer2.setBackgroundColor(Color.parseColor("#bbeeff"))
+            correctAnswer.setBackgroundColor(Color.parseColor("#bbeeff"))
+            if (allFlashcards.size > 0 && flashcardQuestion.text != "What programming language came out in 1978?")
             {
-                Log.i("resetAnswers", "has multiple choice")
-                hasMultipleChoice = true
-                wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                correctAnswer.text = allFlashcards[currentCardIndex].answer
-                wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                flashcardQuestion.text = allFlashcards[currentCardIndex].question
+                flashcardAnswer.text = allFlashcards[currentCardIndex].answer
+                if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null) {
+                    Log.i("resetAnswers", "has multiple choice")
+                    hasMultipleChoice = true
+                    wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+                    correctAnswer.text = allFlashcards[currentCardIndex].answer
+                    wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                    wrongAnswer1.visibility = View.VISIBLE
+                    correctAnswer.visibility = View.VISIBLE
+                    wrongAnswer2.visibility = View.VISIBLE
+                } else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null) {
+                    Log.i("resetAnswers", "does not have multiple choice")
+                    hasMultipleChoice = false
+                    wrongAnswer1.visibility = View.INVISIBLE
+                    correctAnswer.visibility = View.INVISIBLE
+                    wrongAnswer2.visibility = View.INVISIBLE
+                }
+            }
+            else
+            {
                 wrongAnswer1.visibility = View.VISIBLE
                 correctAnswer.visibility = View.VISIBLE
                 wrongAnswer2.visibility = View.VISIBLE
-            }
-            else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
-            {
-                Log.i("resetAnswers", "does not have multiple choice")
-                hasMultipleChoice = false
-                wrongAnswer1.visibility = View.INVISIBLE
-                correctAnswer.visibility = View.INVISIBLE
-                wrongAnswer2.visibility = View.INVISIBLE
             }
 
             hideAnswers.setImageResource(R.drawable.hide_answers)
@@ -150,6 +199,67 @@ class MainActivity : AppCompatActivity() {
         // Detects if the nextCard button was clicked, and if so, move to the next card and display it
         nextCard.setOnClickListener()
         {
+            val leftOutAnim = AnimationUtils.loadAnimation(this, R.anim.left_out)
+            val rightInAnim = AnimationUtils.loadAnimation(this, R.anim.right_in)
+            leftOutAnim.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                    // this method is called when the animation first starts
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    // this method is called when the animation ends
+                    findViewById<TextView>(R.id.flashcard_question).startAnimation(rightInAnim)
+                    wrongAnswer1.setBackgroundColor(Color.parseColor("#bbeeff"))
+                    wrongAnswer2.setBackgroundColor(Color.parseColor("#bbeeff"))
+                    correctAnswer.setBackgroundColor(Color.parseColor("#bbeeff"))
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+                    // we don't need to worry about this method
+                }
+            })
+
+            rightInAnim.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                    // this method is called when the animation first starts
+                    var oldCardIndex = currentCardIndex
+                    while (oldCardIndex == currentCardIndex)
+                    {
+                        currentCardIndex = (0..allFlashcards.size-1).random()
+                    }
+                    flashcardQuestion.text = allFlashcards[currentCardIndex].question
+                    flashcardAnswer.text = allFlashcards[currentCardIndex].answer
+                    if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
+                    {
+                        hasMultipleChoice = true
+                        hideAnswers.setImageResource(R.drawable.hide_answers)
+                        isShowingAnswers = true
+                        wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+                        correctAnswer.text = allFlashcards[currentCardIndex].answer
+                        wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+                        wrongAnswer1.visibility = View.VISIBLE
+                        correctAnswer.visibility = View.VISIBLE
+                        wrongAnswer2.visibility = View.VISIBLE
+                    }
+                    else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
+                    {
+                        hasMultipleChoice = false
+                        hideAnswers.setImageResource(R.drawable.hide_answers)
+                        isShowingAnswers = false
+                        wrongAnswer1.visibility = View.INVISIBLE
+                        correctAnswer.visibility = View.INVISIBLE
+                        wrongAnswer2.visibility = View.INVISIBLE
+                    }
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    // this method is called when the animation ends
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+                    // we don't need to worry about this method
+                }
+            })
 
             if (allFlashcards.size == 0)
             {
@@ -157,39 +267,7 @@ class MainActivity : AppCompatActivity() {
             }
             else if (allFlashcards.size > 1)
             {
-                wrongAnswer1.setBackgroundColor(Color.parseColor("#FFEB3B"))
-                wrongAnswer2.setBackgroundColor(Color.parseColor("#FFEB3B"))
-                correctAnswer.setBackgroundColor(Color.parseColor("#FFEB3B"))
-                var oldCardIndex = currentCardIndex
-                while (oldCardIndex == currentCardIndex)
-                {
-                    currentCardIndex = (0..allFlashcards.size-1).random()
-                }
-                oldCardIndex = currentCardIndex
-            }
-
-            flashcardQuestion.text = allFlashcards[currentCardIndex].question
-            flashcardAnswer.text = allFlashcards[currentCardIndex].answer
-            if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
-            {
-                hasMultipleChoice = true
-                hideAnswers.setImageResource(R.drawable.hide_answers)
-                isShowingAnswers = true
-                wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                correctAnswer.text = allFlashcards[currentCardIndex].answer
-                wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
-                wrongAnswer1.visibility = View.VISIBLE
-                correctAnswer.visibility = View.VISIBLE
-                wrongAnswer2.visibility = View.VISIBLE
-            }
-            else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
-            {
-                hasMultipleChoice = false
-                hideAnswers.setImageResource(R.drawable.hide_answers)
-                isShowingAnswers = false
-                wrongAnswer1.visibility = View.INVISIBLE
-                correctAnswer.visibility = View.INVISIBLE
-                wrongAnswer2.visibility = View.INVISIBLE
+                findViewById<View>(R.id.flashcard_question).startAnimation(leftOutAnim)
             }
         }
 
@@ -302,6 +380,7 @@ class MainActivity : AppCompatActivity() {
         {
             val intent = Intent(this, AddCardActivity::class.java)
             resultLauncher.launch(intent)
+            overridePendingTransition(R.anim.right_in, R.anim.left_out)
         }
 
 
@@ -372,6 +451,7 @@ class MainActivity : AppCompatActivity() {
             }
             editResultLauncher.launch(intent)
         }
+
 
 
     }

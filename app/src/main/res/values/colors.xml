@@ -7,5 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="lightTeal">#77aaff</color>
+    <color name="lightTeal2">#99ccff</color>
+    <color name="lightTeal3">#bbeeff</color>
+    <color name="lightTeal4">#5588ff</color>
+    <color name="lightTeal5">#3366ff</color>
+    <color name="multipleChoiceQuestionColor">#bbeeff</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#000000</color>
 </resources>
