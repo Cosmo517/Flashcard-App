@@ -203,6 +203,7 @@ class MainActivity : AppCompatActivity() {
         correctAnswer.setOnClickListener()
         {
             correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
+            // Confetti Library taken from: https://github.com/DanielMartinus/Konfetti
             val party = Party(
                 speed = 0f,
                 maxSpeed = 20f,
