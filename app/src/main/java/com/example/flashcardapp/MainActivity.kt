@@ -1,9 +1,11 @@
 package com.example.flashcardapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -13,12 +15,27 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
-import java.security.AccessController.getContext
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import nl.dionsegijn.konfetti.xml.KonfettiView
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var flashcardDatabase: FlashcardDatabase
     var allFlashcards = mutableListOf<Flashcard>()
+    var countDownTimer: CountDownTimer? = null
+    private fun startTimer()
+    {
+        countDownTimer?.cancel()
+        countDownTimer?.start()
+    }
+    private fun cancelTimer()
+    {
+        countDownTimer?.cancel()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         flashcardDatabase = FlashcardDatabase(this)
         allFlashcards = flashcardDatabase.getAllCards().toMutableList()
@@ -29,15 +46,30 @@ class MainActivity : AppCompatActivity() {
         val wrongAnswer1 = findViewById<TextView>(R.id.wrong_answer_1)
         val wrongAnswer2 = findViewById<TextView>(R.id.wrong_answer_2)
         val correctAnswer = findViewById<TextView>(R.id.correct_answer)
-        val resetAnswers = findViewById<ImageView>(R.id.reset_answers)
+        val timeMode = findViewById<ImageView>(R.id.timed_mode)
         val hideAnswers = findViewById<ImageView>(R.id.toggle_choices)
         val addCard = findViewById<ImageView>(R.id.add_card_button)
         val editCard = findViewById<ImageView>(R.id.edit_button)
         val nextCard = findViewById<ImageView>(R.id.next_button)
         val deleteCard = findViewById<ImageView>(R.id.delete_card_button)
+        val timerText = findViewById<TextView>(R.id.timer)
+        val viewKonfetti = findViewById<KonfettiView>(R.id.konfettiView)
         var currentCardIndex = 0
         var isShowingAnswers = true
         var hasMultipleChoice = true
+        var isTimedMode = false
+
+        flashcardQuestion.cameraDistance = 28000f
+        flashcardAnswer.cameraDistance = 28000f
+
+        countDownTimer = object : CountDownTimer(16000, 1000) {
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long) {
+                timerText.text = "" + millisUntilFinished / 1000
+            }
+
+            override fun onFinish() {}
+        }
 
         if (allFlashcards.size > 0)
         {
@@ -52,6 +84,8 @@ class MainActivity : AppCompatActivity() {
                 correctAnswer.visibility = View.VISIBLE
                 wrongAnswer2.visibility = View.VISIBLE
                 hasMultipleChoice = true
+                if (isTimedMode)
+                    startTimer()
             }
             else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
             {
@@ -59,14 +93,15 @@ class MainActivity : AppCompatActivity() {
                 correctAnswer.visibility = View.INVISIBLE
                 wrongAnswer2.visibility = View.INVISIBLE
                 hasMultipleChoice = false
+                if (isTimedMode)
+                    startTimer()
             }
         }
 
         // Detects if the user clicks the Question to reveal the answer
         flashcardQuestion.setOnClickListener()
         {
-            val answerSideView = findViewById<View>(R.id.flashcard_answer)
-
+/*
             // get the center for the clipping circle
             val cx = answerSideView.width / 2
             val cy = answerSideView.height / 2
@@ -86,15 +121,32 @@ class MainActivity : AppCompatActivity() {
 
             anim.duration = 2500
             anim.start()
+            cancelTimer()
+
+ */
+            flashcardQuestion.animate()
+                .rotationY(90f)
+                .setDuration(200)
+                .withEndAction(
+                    Runnable {
+                        flashcardQuestion.setVisibility(View.INVISIBLE)
+                        flashcardAnswer.visibility = View.VISIBLE
+                        // second quarter turn
+                        flashcardAnswer.rotationY = -90f
+                        flashcardAnswer.animate()
+                            .rotationY(0f)
+                            .setDuration(200)
+                            .start()
+                    }
+                ).start()
         }
 
         // Detects if the user clicks the Answer to toggle back to the question
         flashcardAnswer.setOnClickListener()
         {
-            val questionSideView = findViewById<View>(R.id.flashcard_question)
 
             // get the center for the clipping circle
-            val cx = questionSideView.width / 2
+ /*           val cx = questionSideView.width / 2
             val cy = questionSideView.height / 2
 
             // get the final radius for the clipping circle
@@ -109,9 +161,25 @@ class MainActivity : AppCompatActivity() {
             // hide the question and show the answer to prepare for playing the animation!
             flashcardAnswer.visibility = View.INVISIBLE
             questionSideView.visibility = View.VISIBLE
-
             anim.duration = 2500
             anim.start()
+*/
+            flashcardAnswer.animate()
+                .rotationY(-90f)
+                .setDuration(200)
+                .withEndAction(
+                    Runnable {
+                        flashcardAnswer.setVisibility(View.INVISIBLE)
+                        flashcardQuestion.visibility = View.VISIBLE
+                        // second quarter turn
+                        flashcardQuestion.rotationY = 90f
+                        flashcardQuestion.animate()
+                            .rotationY(0f)
+                            .setDuration(200)
+                            .start()
+                    }
+                ).start()
+
         }
         var correctAnswerColor = "#6fdbff"
         var incorrectAnswerColor = "#ddf6ff"
@@ -120,6 +188,7 @@ class MainActivity : AppCompatActivity() {
         {
             wrongAnswer1.setBackgroundColor(Color.parseColor(incorrectAnswerColor))
             correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
+            cancelTimer()
         }
 
         // Detects if wrongAnswer 2 was clicked and changes the corresponding background colors
@@ -127,52 +196,39 @@ class MainActivity : AppCompatActivity() {
         {
             wrongAnswer2.setBackgroundColor(Color.parseColor(incorrectAnswerColor))
             correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
+            cancelTimer()
         }
 
         // Detects if correctAnswer was clicked and changes the corresponding background colors
         correctAnswer.setOnClickListener()
         {
             correctAnswer.setBackgroundColor(Color.parseColor(correctAnswerColor))
+            val party = Party(
+                speed = 0f,
+                maxSpeed = 20f,
+                damping = 0.9f,
+                spread = 360,
+                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                position = Position.Relative(0.5, 0.35)
+            )
+            viewKonfetti.start(party)
+            cancelTimer()
         }
 
-        // Detects if resetAnswers was clicked and resets all colors/views
-        resetAnswers.setOnClickListener()
+        // Detects if the user wants to be timed
+        timeMode.setOnClickListener()
         {
-            wrongAnswer1.setBackgroundColor(Color.parseColor("#bbeeff"))
-            wrongAnswer2.setBackgroundColor(Color.parseColor("#bbeeff"))
-            correctAnswer.setBackgroundColor(Color.parseColor("#bbeeff"))
-            if (allFlashcards.size > 0 && flashcardQuestion.text != "What programming language came out in 1978?")
+            isTimedMode = !isTimedMode
+            if (isTimedMode)
             {
-                flashcardQuestion.text = allFlashcards[currentCardIndex].question
-                flashcardAnswer.text = allFlashcards[currentCardIndex].answer
-                if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null) {
-                    Log.i("resetAnswers", "has multiple choice")
-                    hasMultipleChoice = true
-                    wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                    correctAnswer.text = allFlashcards[currentCardIndex].answer
-                    wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
-                    wrongAnswer1.visibility = View.VISIBLE
-                    correctAnswer.visibility = View.VISIBLE
-                    wrongAnswer2.visibility = View.VISIBLE
-                } else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null) {
-                    Log.i("resetAnswers", "does not have multiple choice")
-                    hasMultipleChoice = false
-                    wrongAnswer1.visibility = View.INVISIBLE
-                    correctAnswer.visibility = View.INVISIBLE
-                    wrongAnswer2.visibility = View.INVISIBLE
-                }
+                startTimer()
             }
             else
             {
-                wrongAnswer1.visibility = View.VISIBLE
-                correctAnswer.visibility = View.VISIBLE
-                wrongAnswer2.visibility = View.VISIBLE
+                cancelTimer()
+                timerText.text = ""
             }
-
-            hideAnswers.setImageResource(R.drawable.hide_answers)
-            isShowingAnswers = true
-            flashcardQuestion.visibility = View.VISIBLE
-            flashcardAnswer.visibility = View.INVISIBLE
         }
 
         // Detects if hideAnswers was clicked and shows/hides the answers as appropriate
@@ -250,6 +306,8 @@ class MainActivity : AppCompatActivity() {
                         correctAnswer.visibility = View.INVISIBLE
                         wrongAnswer2.visibility = View.INVISIBLE
                     }
+                    if (isTimedMode)
+                        startTimer()
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {

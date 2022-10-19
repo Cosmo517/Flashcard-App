@@ -30,10 +30,10 @@
         android:layout_marginEnd="10dp"
         android:background="@drawable/card_background_answer"
         android:gravity="center"
-        android:text="The programming language C"
-        android:textSize="30sp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:text="The programming language C"
+        android:textSize="30sp"
         android:visibility="invisible" />
 
     <TextView
@@ -62,10 +62,10 @@
         android:layout_marginTop="50dp"
         android:background="@color/multipleChoiceQuestionColor"
         android:gravity="center"
-        android:text="The programming language C"
-        android:textColor="@color/black"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:text="The programming language C"
+        android:textColor="@color/black"
         android:textSize="22dp" />
 
     <TextView
@@ -78,10 +78,10 @@
         android:layout_marginTop="50dp"
         android:background="@color/multipleChoiceQuestionColor"
         android:gravity="center"
-        android:text="The programming language Java"
-        android:textColor="@color/black"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:text="The programming language Java"
+        android:textColor="@color/black"
         android:textSize="22dp" />
 
     <ImageView
@@ -102,19 +102,19 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="86dp"
         android:layout_marginEnd="35dp"
-        android:layout_toStartOf="@+id/reset_answers"
+        android:layout_toStartOf="@+id/timed_mode"
         android:layout_toEndOf="@+id/edit_button"
         app:srcCompat="@drawable/add_card_symbol" />
 
     <ImageView
-        android:id="@+id/reset_answers"
+        android:id="@+id/timed_mode"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_below="@+id/wrong_answer_2"
         android:layout_alignEnd="@+id/wrong_answer_2"
         android:layout_marginTop="86dp"
         android:layout_marginEnd="30dp"
-        app:srcCompat="@drawable/ic_iconmonstr_refresh_4" />
+        app:srcCompat="@drawable/ic_iconmonstr_time_12" />
 
     <ImageView
         android:id="@+id/edit_button"
@@ -142,8 +142,34 @@
         android:layout_height="50dp"
         android:layout_below="@+id/flashcard_question"
         android:layout_alignStart="@+id/flashcard_question"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="40dp"
         app:srcCompat="@drawable/ic_iconmonstr_trash_can_30" />
+
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/flashcard_question"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="80dp"
+        android:gravity="center"
+        android:layout_toStartOf="@+id/next_button"
+        android:layout_toEndOf="@+id/delete_card_button"
+        android:text=""
+        android:textSize="20dp" />
+
+
+    <nl.dionsegijn.konfetti.xml.KonfettiView
+        android:id="@+id/konfettiView"
+        android:layout_width="374dp"
+        android:layout_height="423dp"
+        android:layout_alignStart="@+id/correct_answer"
+        android:layout_alignEnd="@+id/correct_answer"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="0dp" />
 
 </RelativeLayout>
