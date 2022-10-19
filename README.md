@@ -1,5 +1,25 @@
 ## Flashcard App
 
+## Lab 4
+
+### App Description
+The app has been updated to include more styling and animations. The app allows the user to create multiple flashcards of their choice. The user can either add multiple choice answers or not when they create or edit an existing card. The user can also delete a card in the deck if they dont wish to see it anymore. A flashcard is randomly chosen from the deck when the user clicks the "next" button. This avoids picking the same card the user is currently on to always generate a random card, assuming there is more than one card in the deck.
+
+### App Walk-though
+Walkthrough coming soon!
+<img src="YOUR_GIF_URL_HERE" width=200><br>
+
+## Required
+- [x] User sees a transition animation when going from the main screen to the add card screen.
+- [x] User sees a reveal animation when the flashcard is tapped and the answer is shown
+- [x] User sees flashcards animating in / out when the 'next' button is tapped
+
+## Optional
+- [ ] Extra styling is added!
+- [ ] User sees a countdown timer for each question
+- [ ] User sees a 'card flip' animation when the card is tapped
+- [ ] User sees a celebration animation with confetti when they answer a question correctly
+
 ## Lab 3
 
 ### App Description
