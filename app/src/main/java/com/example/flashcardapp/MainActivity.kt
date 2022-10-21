@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var flashcardDatabase: FlashcardDatabase
     var allFlashcards = mutableListOf<Flashcard>()
     var countDownTimer: CountDownTimer? = null
+    // Timers
     private fun startTimer()
     {
         countDownTimer?.cancel()
@@ -59,11 +60,12 @@ class MainActivity : AppCompatActivity() {
         var hasMultipleChoice = true
         var isTimedMode = false
 
+        // Camera distances so the flashcard animations don't look sloppy
         flashcardQuestion.cameraDistance = 28000f
         flashcardAnswer.cameraDistance = 28000f
 
+        // Display countdown timer
         countDownTimer = object : CountDownTimer(16000, 1000) {
-            @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
                 timerText.text = "" + millisUntilFinished / 1000
             }
@@ -71,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish() {}
         }
 
+        // Determine if there should be a default flashcard or if there are flashcards saved (and choose one to display)
         if (allFlashcards.size > 0)
         {
             flashcardQuestion.text = allFlashcards[0].question
@@ -101,29 +104,6 @@ class MainActivity : AppCompatActivity() {
         // Detects if the user clicks the Question to reveal the answer
         flashcardQuestion.setOnClickListener()
         {
-/*
-            // get the center for the clipping circle
-            val cx = answerSideView.width / 2
-            val cy = answerSideView.height / 2
-
-            // get the final radius for the clipping circle
-
-            val finalRadius = Math.hypot(cx.toDouble(), cy.toDouble()).toFloat()
-
-            // create the animator for this view (the start radius is zero)
-
-            val anim = ViewAnimationUtils.createCircularReveal(answerSideView, cx, cy, 0f, finalRadius)
-
-
-        // hide the question and show the answer to prepare for playing the animation!
-            flashcardQuestion.visibility = View.INVISIBLE
-            answerSideView.visibility = View.VISIBLE
-
-            anim.duration = 2500
-            anim.start()
-            cancelTimer()
-
- */
             flashcardQuestion.animate()
                 .rotationY(90f)
                 .setDuration(200)
@@ -144,26 +124,6 @@ class MainActivity : AppCompatActivity() {
         // Detects if the user clicks the Answer to toggle back to the question
         flashcardAnswer.setOnClickListener()
         {
-
-            // get the center for the clipping circle
- /*           val cx = questionSideView.width / 2
-            val cy = questionSideView.height / 2
-
-            // get the final radius for the clipping circle
-
-            val finalRadius = Math.hypot(cx.toDouble(), cy.toDouble()).toFloat()
-
-            // create the animator for this view (the start radius is zero)
-
-            val anim = ViewAnimationUtils.createCircularReveal(questionSideView, cx, cy, 0f, finalRadius)
-
-
-            // hide the question and show the answer to prepare for playing the animation!
-            flashcardAnswer.visibility = View.INVISIBLE
-            questionSideView.visibility = View.VISIBLE
-            anim.duration = 2500
-            anim.start()
-*/
             flashcardAnswer.animate()
                 .rotationY(-90f)
                 .setDuration(200)
@@ -181,8 +141,9 @@ class MainActivity : AppCompatActivity() {
                 ).start()
 
         }
-        var correctAnswerColor = "#6fdbff"
-        var incorrectAnswerColor = "#ddf6ff"
+
+        val correctAnswerColor = "#6fdbff"
+        val incorrectAnswerColor = "#ddf6ff"
         // Detects if wrongAnswer 1 was clicked and changes the corresponding background colors
         wrongAnswer1.setOnClickListener()
         {
@@ -258,6 +219,8 @@ class MainActivity : AppCompatActivity() {
         {
             val leftOutAnim = AnimationUtils.loadAnimation(this, R.anim.left_out)
             val rightInAnim = AnimationUtils.loadAnimation(this, R.anim.right_in)
+
+            // LeftIn animation
             leftOutAnim.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
                     // this method is called when the animation first starts
@@ -265,6 +228,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onAnimationEnd(animation: Animation?) {
                     // this method is called when the animation ends
+                    // Start the next animation to make it look smooth (and change the colors of the MCQ)
                     findViewById<TextView>(R.id.flashcard_question).startAnimation(rightInAnim)
                     wrongAnswer1.setBackgroundColor(Color.parseColor("#bbeeff"))
                     wrongAnswer2.setBackgroundColor(Color.parseColor("#bbeeff"))
@@ -276,16 +240,20 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+            // RightIn animation
             rightInAnim.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
                     // this method is called when the animation first starts
+                    // Randomize the flashcard the player is going to next and dont pick the current flashcard the user is on
                     var oldCardIndex = currentCardIndex
                     while (oldCardIndex == currentCardIndex)
                     {
                         currentCardIndex = (0..allFlashcards.size-1).random()
                     }
+
                     flashcardQuestion.text = allFlashcards[currentCardIndex].question
                     flashcardAnswer.text = allFlashcards[currentCardIndex].answer
+                    // Checks to see if the flashcard the user is going to has Multiple Choices or not
                     if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
                     {
                         hasMultipleChoice = true
@@ -320,13 +288,14 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+            // This determines whether or not to start the animation
             if (allFlashcards.size == 0)
             {
                 return@setOnClickListener
             }
             else if (allFlashcards.size > 1)
             {
-                findViewById<View>(R.id.flashcard_question).startAnimation(leftOutAnim)
+                findViewById<TextView>(R.id.flashcard_question).startAnimation(leftOutAnim)
             }
         }
 
@@ -336,6 +305,10 @@ class MainActivity : AppCompatActivity() {
         {
             flashcardDatabase.deleteCard(flashcardQuestion.text.toString())
             allFlashcards = flashcardDatabase.getAllCards().toMutableList()
+            // This handles moving the user back by one card.
+            // If they have more than one card in their deck, update all the flashcard information
+            // If not, display a splashscreen for them to make a new card
+            // This also handles updating all the information when they move back by a card
             if (currentCardIndex > 0)
             {
                 currentCardIndex--;
@@ -442,7 +415,7 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.right_in, R.anim.left_out)
         }
 
-
+        // This is used when the user wants to edit a card
         val editResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             val data: Intent? = result.data
