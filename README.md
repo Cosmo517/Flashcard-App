@@ -7,7 +7,7 @@ The app has been updated to include more styling and animations. The app allows 
 
 ### App Walk-though
 Walkthrough coming soon!
-<img src="YOUR_GIF_URL_HERE" width=200><br>
+<img src="https://i.imgur.com/zMN0Ige.gif" width=200><br>
 
 ## Required
 - [x] User sees a transition animation when going from the main screen to the add card screen.
