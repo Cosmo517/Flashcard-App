@@ -119,6 +119,7 @@ class MainActivity : AppCompatActivity() {
                             .start()
                     }
                 ).start()
+            cancelTimer()
         }
 
         // Detects if the user clicks the Answer to toggle back to the question
@@ -139,7 +140,6 @@ class MainActivity : AppCompatActivity() {
                             .start()
                     }
                 ).start()
-
         }
 
         val correctAnswerColor = "#6fdbff"
@@ -246,9 +246,15 @@ class MainActivity : AppCompatActivity() {
                     // this method is called when the animation first starts
                     // Randomize the flashcard the player is going to next and dont pick the current flashcard the user is on
                     var oldCardIndex = currentCardIndex
-                    while (oldCardIndex == currentCardIndex)
+                    if (allFlashcards.size == 1)
                     {
-                        currentCardIndex = (0..allFlashcards.size-1).random()
+                        currentCardIndex = 0;
+                    }
+                    else
+                    {
+                        while (oldCardIndex == currentCardIndex) {
+                            currentCardIndex = (0..allFlashcards.size - 1).random()
+                        }
                     }
 
                     flashcardQuestion.text = allFlashcards[currentCardIndex].question
@@ -293,7 +299,7 @@ class MainActivity : AppCompatActivity() {
             {
                 return@setOnClickListener
             }
-            else if (allFlashcards.size > 1)
+            else if (allFlashcards.size > 0)
             {
                 findViewById<TextView>(R.id.flashcard_question).startAnimation(leftOutAnim)
             }
@@ -332,6 +338,7 @@ class MainActivity : AppCompatActivity() {
             }
             else if (currentCardIndex == 0 && allFlashcards.size == 0)
             {
+                currentCardIndex = -1
                 flashcardDatabase.deleteCard(flashcardQuestion.text.toString())
                 allFlashcards = flashcardDatabase.getAllCards().toMutableList()
                 flashcardQuestion.text = "Please create a card"
