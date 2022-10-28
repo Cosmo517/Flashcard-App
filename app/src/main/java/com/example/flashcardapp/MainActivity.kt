@@ -272,16 +272,16 @@ class MainActivity : AppCompatActivity() {
                     if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
                     {
                         hasMultipleChoice = true
-                        hideAnswers.setImageResource(R.drawable.hide_answers)
                         isShowingAnswers = true
+                        hideAnswers.setImageResource(R.drawable.hide_answers)
                         changeFlashcardAnswers()
                         setAnswersVisible()
                     }
                     else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
                     {
                         hasMultipleChoice = false
-                        hideAnswers.setImageResource(R.drawable.hide_answers)
                         isShowingAnswers = false
+                        hideAnswers.setImageResource(R.drawable.hide_answers)
                         setAnswersInvisible()
                     }
                     if (isTimedMode)
