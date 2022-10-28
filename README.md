@@ -5,9 +5,8 @@
 ### App Description
 The app has been updated to include more styling and animations. The app allows the user to create multiple flashcards of their choice. The user can either add multiple choice answers or not when they create or edit an existing card. The user can also delete a card in the deck if they dont wish to see it anymore. A flashcard is randomly chosen from the deck when the user clicks the "next" button. This avoids picking the same card the user is currently on to always generate a random card, assuming there is more than one card in the deck.
 
-### App Walk-though
-Walkthrough coming soon!
-<img src="YOUR_GIF_URL_HERE" width=200><br>
+### App Walk-through
+<img src="https://i.imgur.com/zMN0Ige.gif" width=200><br>
 
 ## Required
 - [x] User sees a transition animation when going from the main screen to the add card screen.
@@ -25,7 +24,7 @@ Walkthrough coming soon!
 ### App Description
 The app has been updated to allow the user to create multiple flashcards of their choice. The user can either add multiple choice answers or not when they create or edit an existing card. The user can also delete a card in the deck if they dont wish to see it anymore. A flashcard is randomly chosen from the deck when the user clicks the "next" button. This avoids picking the same card the user is currently on to always generate a random card, assuming there is more than one card in the deck.
 
-### App Walk-though
+### App Walk-through
 <img src="https://i.imgur.com/7kZj1MT.gif" width=200><br>
 
 
@@ -44,7 +43,7 @@ The app has been updated to allow the user to create multiple flashcards of thei
 ### App Description
 This simple app asks a single question, and allows the user to tap the question to reveal the answer, tap one of the multiple choices which will highlight the answer, reset the answers, or hide the visibility of the visible answers. New functionality was added to allow the user to replace the question that is asked (and the corresponding answer) with a question and answer of their choosing, or they could edit the existing card. The user can also add multiple choice answers for the question if they wish.
 
-### App Walk-though
+### App Walk-through
 <img src="https://i.imgur.com/Cibw1qF.gif" width=200><br>
 
 ## Required
@@ -66,7 +65,7 @@ This simple app asks a single question, and allows the user to tap the question 
 ### App Description
 This simple app asks a single question, and allows the user to tap the question to reveal the answer, tap one of the multiple choices which will highlight the answer, reset the answers, or hide the visibility of the visible answers.
 
-### App Walk-though
+### App Walk-through
 <img src="https://i.imgur.com/okoPCxz.gif" width=200><br>
 
 ## Required
