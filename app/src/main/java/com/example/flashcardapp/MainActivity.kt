@@ -60,6 +60,28 @@ class MainActivity : AppCompatActivity() {
         var hasMultipleChoice = true
         var isTimedMode = false
 
+        fun setAnswersVisible()
+        {
+            wrongAnswer1.visibility = View.VISIBLE
+            correctAnswer.visibility = View.VISIBLE
+            wrongAnswer2.visibility = View.VISIBLE
+        }
+
+        fun setAnswersInvisible()
+        {
+            wrongAnswer1.visibility = View.INVISIBLE
+            correctAnswer.visibility = View.INVISIBLE
+            wrongAnswer2.visibility = View.INVISIBLE
+        }
+
+        fun changeFlashcardAnswers()
+        {
+            wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
+            correctAnswer.text = allFlashcards[currentCardIndex].answer
+            wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
+            setAnswersVisible()
+        }
+
         // Camera distances so the flashcard animations don't look sloppy
         flashcardQuestion.cameraDistance = 28000f
         flashcardAnswer.cameraDistance = 28000f
@@ -78,23 +100,17 @@ class MainActivity : AppCompatActivity() {
         {
             flashcardQuestion.text = allFlashcards[0].question
             flashcardAnswer.text = allFlashcards[0].answer
+            // checks to see if the flashcard as wrong answers, and if so, display them
             if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
             {
-                wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                correctAnswer.text = allFlashcards[currentCardIndex].answer
-                wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
-                wrongAnswer1.visibility = View.VISIBLE
-                correctAnswer.visibility = View.VISIBLE
-                wrongAnswer2.visibility = View.VISIBLE
+                changeFlashcardAnswers()
                 hasMultipleChoice = true
                 if (isTimedMode)
                     startTimer()
             }
             else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
             {
-                wrongAnswer1.visibility = View.INVISIBLE
-                correctAnswer.visibility = View.INVISIBLE
-                wrongAnswer2.visibility = View.INVISIBLE
+                setAnswersInvisible()
                 hasMultipleChoice = false
                 if (isTimedMode)
                     startTimer()
@@ -199,17 +215,13 @@ class MainActivity : AppCompatActivity() {
             if (isShowingAnswers && hasMultipleChoice)
             {
                 hideAnswers.setImageResource(R.drawable.show_answers)
-                wrongAnswer1.visibility = View.INVISIBLE
-                wrongAnswer2.visibility = View.INVISIBLE
-                correctAnswer.visibility = View.INVISIBLE
+                setAnswersInvisible()
                 isShowingAnswers = false
             }
             else if (hasMultipleChoice)
             {
                 hideAnswers.setImageResource(R.drawable.hide_answers)
-                wrongAnswer1.visibility = View.VISIBLE
-                wrongAnswer2.visibility = View.VISIBLE
-                correctAnswer.visibility = View.VISIBLE
+                setAnswersVisible()
                 isShowingAnswers = true
             }
         }
@@ -217,17 +229,16 @@ class MainActivity : AppCompatActivity() {
         // Detects if the nextCard button was clicked, and if so, move to the next card and display it
         nextCard.setOnClickListener()
         {
+            // Define the left and right animations
             val leftOutAnim = AnimationUtils.loadAnimation(this, R.anim.left_out)
             val rightInAnim = AnimationUtils.loadAnimation(this, R.anim.right_in)
 
             // LeftIn animation
             leftOutAnim.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
-                    // this method is called when the animation first starts
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    // this method is called when the animation ends
                     // Start the next animation to make it look smooth (and change the colors of the MCQ)
                     findViewById<TextView>(R.id.flashcard_question).startAnimation(rightInAnim)
                     wrongAnswer1.setBackgroundColor(Color.parseColor("#bbeeff"))
@@ -236,17 +247,15 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onAnimationRepeat(animation: Animation?) {
-                    // we don't need to worry about this method
                 }
             })
 
             // RightIn animation
             rightInAnim.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
-                    // this method is called when the animation first starts
                     // Randomize the flashcard the player is going to next and dont pick the current flashcard the user is on
-                    var oldCardIndex = currentCardIndex
-                    if (allFlashcards.size == 1)
+                    var oldCardIndex = currentCardIndex // Store the currentCardIndex to be used for comparison
+                    if (allFlashcards.size == 1) // Only one flashcard in the deck
                     {
                         currentCardIndex = 0;
                     }
@@ -256,7 +265,7 @@ class MainActivity : AppCompatActivity() {
                             currentCardIndex = (0..allFlashcards.size - 1).random()
                         }
                     }
-
+                    // Change the text on the flashcard coming in so the text doesnt suddenly change once the card is in place
                     flashcardQuestion.text = allFlashcards[currentCardIndex].question
                     flashcardAnswer.text = allFlashcards[currentCardIndex].answer
                     // Checks to see if the flashcard the user is going to has Multiple Choices or not
@@ -265,21 +274,15 @@ class MainActivity : AppCompatActivity() {
                         hasMultipleChoice = true
                         hideAnswers.setImageResource(R.drawable.hide_answers)
                         isShowingAnswers = true
-                        wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                        correctAnswer.text = allFlashcards[currentCardIndex].answer
-                        wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
-                        wrongAnswer1.visibility = View.VISIBLE
-                        correctAnswer.visibility = View.VISIBLE
-                        wrongAnswer2.visibility = View.VISIBLE
+                        changeFlashcardAnswers()
+                        setAnswersVisible()
                     }
                     else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
                     {
                         hasMultipleChoice = false
                         hideAnswers.setImageResource(R.drawable.hide_answers)
                         isShowingAnswers = false
-                        wrongAnswer1.visibility = View.INVISIBLE
-                        correctAnswer.visibility = View.INVISIBLE
-                        wrongAnswer2.visibility = View.INVISIBLE
+                        setAnswersInvisible()
                     }
                     if (isTimedMode)
                         startTimer()
@@ -301,7 +304,32 @@ class MainActivity : AppCompatActivity() {
             }
             else if (allFlashcards.size > 0)
             {
-                findViewById<TextView>(R.id.flashcard_question).startAnimation(leftOutAnim)
+                // Check to see if the flashcardAnswer is displayed, and if it is, flip it before going to the next card
+                if (flashcardAnswer.visibility == View.VISIBLE)
+                {
+                    flashcardAnswer.animate()
+                        .rotationY(-90f)
+                        .setDuration(400)
+                        .withEndAction(
+                            Runnable {
+                                flashcardAnswer.setVisibility(View.INVISIBLE)
+                                flashcardQuestion.visibility = View.VISIBLE
+                                // second quarter turn
+                                flashcardQuestion.rotationY = 90f
+                                flashcardQuestion.animate()
+                                    .rotationY(0f)
+                                    .setDuration(400)
+                                    .withEndAction {
+                                        findViewById<TextView>(R.id.flashcard_question).startAnimation(leftOutAnim)
+                                    }
+                                    .start()
+                            }
+                        ).start()
+                }
+                else
+                {
+                    findViewById<TextView>(R.id.flashcard_question).startAnimation(leftOutAnim)
+                }
             }
         }
 
@@ -315,6 +343,8 @@ class MainActivity : AppCompatActivity() {
             // If they have more than one card in their deck, update all the flashcard information
             // If not, display a splashscreen for them to make a new card
             // This also handles updating all the information when they move back by a card
+
+            // As long as the user is not on the first card of the deck
             if (currentCardIndex > 0)
             {
                 currentCardIndex--;
@@ -322,20 +352,15 @@ class MainActivity : AppCompatActivity() {
                 flashcardAnswer.text = allFlashcards[currentCardIndex].answer
                 if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
                 {
-                    wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                    correctAnswer.text = allFlashcards[currentCardIndex].answer
-                    wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
-                    wrongAnswer1.visibility = View.VISIBLE
-                    correctAnswer.visibility = View.VISIBLE
-                    wrongAnswer2.visibility = View.VISIBLE
+                    changeFlashcardAnswers()
+                    setAnswersVisible()
                 }
                 else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
                 {
-                    wrongAnswer1.visibility = View.INVISIBLE
-                    correctAnswer.visibility = View.INVISIBLE
-                    wrongAnswer2.visibility = View.INVISIBLE
+                    setAnswersInvisible()
                 }
             }
+            // if the user has no cards left
             else if (currentCardIndex == 0 && allFlashcards.size == 0)
             {
                 currentCardIndex = -1
@@ -343,10 +368,9 @@ class MainActivity : AppCompatActivity() {
                 allFlashcards = flashcardDatabase.getAllCards().toMutableList()
                 flashcardQuestion.text = "Please create a card"
                 flashcardAnswer.text = "Please create a card"
-                wrongAnswer1.visibility = View.INVISIBLE
-                correctAnswer.visibility = View.INVISIBLE
-                wrongAnswer2.visibility = View.INVISIBLE
+                setAnswersInvisible()
             }
+            // If the user is on the first card but has more than 1, move them to the end of the deck
             else if (currentCardIndex == 0 && allFlashcards.size > 0)
             {
                 currentCardIndex = allFlashcards.size - 1
@@ -354,18 +378,12 @@ class MainActivity : AppCompatActivity() {
                 flashcardAnswer.text = allFlashcards[currentCardIndex].answer
                 if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer2 != null)
                 {
-                    wrongAnswer1.text = allFlashcards[currentCardIndex].wrongAnswer1
-                    correctAnswer.text = allFlashcards[currentCardIndex].answer
-                    wrongAnswer2.text = allFlashcards[currentCardIndex].wrongAnswer2
-                    wrongAnswer1.visibility = View.VISIBLE
-                    correctAnswer.visibility = View.VISIBLE
-                    wrongAnswer2.visibility = View.VISIBLE
+                    changeFlashcardAnswers()
+                    setAnswersVisible()
                 }
                 else if (allFlashcards[currentCardIndex].wrongAnswer1 == null && allFlashcards[currentCardIndex].wrongAnswer2 == null)
                 {
-                    wrongAnswer1.visibility = View.INVISIBLE
-                    correctAnswer.visibility = View.INVISIBLE
-                    wrongAnswer2.visibility = View.INVISIBLE
+                    setAnswersInvisible()
                 }
 
             }
@@ -381,6 +399,7 @@ class MainActivity : AppCompatActivity() {
 
             if (data != null)
             {
+                // Grab the data passed back
                 val userQuestion = data.getStringExtra("QUESTION_KEY").toString()
                 val userAnswer = data.getStringExtra("ANSWER_KEY").toString()
                 val userWrongAnswer1 = data.getStringExtra("WRONG_ANSWER_1_KEY").toString()
@@ -391,11 +410,6 @@ class MainActivity : AppCompatActivity() {
                     "Flashcard successfully created",
                     Snackbar.LENGTH_SHORT)
                     .show()
-
-                Log.i("MainActivityUser", "userQuestion: $userQuestion")
-                Log.i("MainActivityUser", "userAnswer: $userAnswer")
-                Log.i("MainActivityUser", "userWrongAnswer1: $userWrongAnswer1")
-                Log.i("MainActivityUser", "userWrongAnswer2: $userWrongAnswer2")
 
                 if (userWrongAnswer1 != "null" && userWrongAnswer2 != "null")
                 {
@@ -408,9 +422,6 @@ class MainActivity : AppCompatActivity() {
                 allFlashcards = flashcardDatabase.getAllCards().toMutableList()
 
 
-            }
-            else {
-                Log.i("MainActivity", "Returned null data from AddCardActivity")
             }
         }
 
@@ -439,8 +450,6 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT)
                     .show()
 
-                Log.i("MainActivityUser", "userQuestion: $userQuestion")
-                Log.i("MainActivityUser", "userAnswer: $userAnswer")
                 // set the TextViews to show the EDITED question and answer
                 flashcardQuestion.text = userQuestion
                 flashcardAnswer.text = userAnswer
@@ -451,28 +460,20 @@ class MainActivity : AppCompatActivity() {
                     wrongAnswer2.text = userWrongAnswer2
                     allFlashcards[currentCardIndex].wrongAnswer1 = userWrongAnswer1
                     allFlashcards[currentCardIndex].wrongAnswer2 = userWrongAnswer2
-                    wrongAnswer1.visibility = View.VISIBLE
-                    correctAnswer.visibility = View.VISIBLE
-                    wrongAnswer2.visibility = View.VISIBLE
+                    setAnswersVisible()
                     hasMultipleChoice = true
                 }
                 else
                 {
                     allFlashcards[currentCardIndex].wrongAnswer1 = null
                     allFlashcards[currentCardIndex].wrongAnswer2 = null
-                    wrongAnswer1.visibility = View.INVISIBLE
-                    correctAnswer.visibility = View.INVISIBLE
-                    wrongAnswer2.visibility = View.INVISIBLE
+                    setAnswersInvisible()
                     hasMultipleChoice = false
                 }
                 allFlashcards[currentCardIndex].question = userQuestion
                 allFlashcards[currentCardIndex].answer = userAnswer
                 flashcardDatabase.updateCard(allFlashcards[currentCardIndex])
 
-            }
-            else
-            {
-                Log.i("MainActivity", "Returned null data from AddCardActivity")
             }
         }
 
@@ -482,7 +483,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddCardActivity::class.java)
             intent.putExtra("question", flashcardQuestion.text)
             intent.putExtra("answer", flashcardAnswer.text)
-            Log.i("MainActivityUser", "CurrentIndex: $currentCardIndex")
             if (allFlashcards[currentCardIndex].wrongAnswer1 != null && allFlashcards[currentCardIndex].wrongAnswer1 != null)
             {
                 intent.putExtra("wrongAnswer1", wrongAnswer1.text)
